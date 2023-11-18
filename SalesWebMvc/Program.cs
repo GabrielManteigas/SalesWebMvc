@@ -1,4 +1,21 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using SalesWebMvc.Data;
 var builder = WebApplication.CreateBuilder(args);
+
+// Add services to the container.
+builder.Services.AddDbContext<SalesWebMvcContext>(options =>
+{
+    var connectionString = builder.Configuration.GetConnectionString("SalesWebMvcContext");
+
+    /*options.UseMySql(ServerVersion.AutoDetect(connectionString), builder =>
+        builder.MigrationsAssembly("SalesWebMvc"));*/
+    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString), builder =>
+        builder.MigrationsAssembly("SalesWebMvc"));
+
+    /*    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));*/
+});
+
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -16,7 +33,7 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
-app.UseRouting();
+app.UseRouting(); 
 
 app.UseAuthorization();
 

@@ -2,6 +2,7 @@ using Microsoft.DotNet.Scaffolding.Shared.ProjectModel;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using SalesWebMvc.Data;
+using SalesWebMvc.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -18,7 +19,7 @@ builder.Services.AddDbContext<SalesWebMvcContext>(options =>
 });
 
 builder.Services.AddScoped<SeedingService>();
-//builder.Services.AddTransient<SeedingService>();
+builder.Services.AddScoped<SellerService>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();

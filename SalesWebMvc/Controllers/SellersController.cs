@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using SalesWebMvc.Models;
 using SalesWebMvc.Services;
 
 namespace SalesWebMvc.Controllers
@@ -16,6 +17,19 @@ namespace SalesWebMvc.Controllers
         {
             var list = await _sellerService.FindAllAsync();
             return View(list);
+        }
+
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(Seller obj)
+        {
+            await _sellerService.InsertAsync(obj);
+            return RedirectToAction(nameof(Index));
         }
     }
 }

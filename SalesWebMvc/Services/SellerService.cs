@@ -20,6 +20,7 @@ namespace SalesWebMvc.Services
 
         public async Task InsertAsync(Seller obj) 
         {
+            obj.Department = await _context.Department.FirstAsync();
             await _context.Seller.AddAsync(obj); 
             await _context.SaveChangesAsync();
         }

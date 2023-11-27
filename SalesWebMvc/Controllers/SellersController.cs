@@ -35,6 +35,10 @@ namespace SalesWebMvc.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create(SellerFormViewModel obj)
         {
+            if (!ModelState.IsValid)
+            {
+                return View(obj);
+            }
             _sellerService.Insert(obj.Seller);
             return RedirectToAction(nameof(Index));
         }
@@ -104,6 +108,11 @@ namespace SalesWebMvc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditAsync(int id, SellerFormViewModel viewModel)
         {
+            if (!ModelState.IsValid)
+            {
+                return View(viewModel);
+            }
+
             if (id != viewModel.Seller.Id)
             {
                 return RedirectToAction(nameof(Error), new { message = "Id mismatch" });

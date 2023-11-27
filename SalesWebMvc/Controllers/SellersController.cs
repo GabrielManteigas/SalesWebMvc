@@ -2,6 +2,7 @@
 using SalesWebMvc.Models;
 using SalesWebMvc.Models.ViewModels;
 using SalesWebMvc.Services;
+using SalesWebMvc.Services.Exceptions;
 
 namespace SalesWebMvc.Controllers
 {
@@ -73,6 +74,51 @@ namespace SalesWebMvc.Controllers
             }
 
             return View(obj);
+        }
+
+        public async Task<IActionResult> EditAsync(int? id)
+        {
+            if(id == null)
+            {
+                return NotFound();
+            }
+
+            var obj = await _sellerService.FindByIdAsync(id.Value);
+            if(obj == null)
+            {
+                return NotFound();
+            }
+
+            List<Department> departments = await _departmentService.FindAllAsync();
+            SellerFormViewModel viewModel = new SellerFormViewModel { 
+                Seller = obj,
+                Departments = departments
+            };
+
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditAsync(int id, SellerFormViewModel viewModel)
+        {
+            if(id != viewModel.Seller.Id)
+            {
+                return BadRequest();
+            }
+            try
+            {
+                await _sellerService.UpdateAsync(viewModel.Seller);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (NotFoundException)
+            {
+                return NotFound();
+            }
+            catch (DbConcurrencyException)
+            {
+                return BadRequest();
+            }
         }
     }
 }

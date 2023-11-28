@@ -19,10 +19,10 @@ namespace SalesWebMvc.Services
             return await _context.Seller.ToListAsync();
         }
 
-        public void Insert(Seller obj)
+        public async Task InsertAsync(Seller obj)
         {
             _context.Seller.Add(obj);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
         public async Task<Seller?> FindByIdAsync(int id)
@@ -30,19 +30,20 @@ namespace SalesWebMvc.Services
             return await _context.Seller.Include(obj => obj.Department).FirstOrDefaultAsync(obj => obj.Id == id);
         }
 
-        public async Task Remove(int id)
+        public async Task RemoveAsync(int id)
         {
             var obj = await _context.Seller.FindAsync(id);
             if (obj != null)
             {
                 _context.Seller.Remove(obj);
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
             }
         }
 
         public async Task UpdateAsync(Seller obj)
         {
-            if(!await _context.Seller.AnyAsync(x => x.Id == obj.Id)){
+            bool hasAny = await _context.Seller.AnyAsync(x => x.Id == obj.Id);
+            if (!hasAny){
                 throw new NotFoundException("Id not found");
             }
 

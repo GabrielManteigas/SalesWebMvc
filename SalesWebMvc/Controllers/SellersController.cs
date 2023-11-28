@@ -33,13 +33,15 @@ namespace SalesWebMvc.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(SellerFormViewModel obj)
+        public async Task<IActionResult> Create(SellerFormViewModel obj)
         {
-            if (!ModelState.IsValid)
+            if (!ViewData.ModelState.IsValid)
             {
-                return View(obj);
+                var departments = await _departmentService.FindAllAsync();
+                var viewModel = new SellerFormViewModel { Seller = obj.Seller, Departments = departments };
+                return View(viewModel);
             }
-            _sellerService.Insert(obj.Seller);
+            await _sellerService.InsertAsync(obj.Seller);
             return RedirectToAction(nameof(Index));
         }
 
@@ -62,11 +64,11 @@ namespace SalesWebMvc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
-            await _sellerService.Remove(id);
+            await _sellerService.RemoveAsync(id);
             return RedirectToAction(nameof(Index));
         }
 
-        public async Task<IActionResult> DetailsAsync(int? id)
+        public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
             {
@@ -81,7 +83,7 @@ namespace SalesWebMvc.Controllers
             return View(obj);
         }
 
-        public async Task<IActionResult> EditAsync(int? id)
+        public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
             {
@@ -106,7 +108,7 @@ namespace SalesWebMvc.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditAsync(int id, SellerFormViewModel viewModel)
+        public async Task<IActionResult> Edit(int id, SellerFormViewModel viewModel)
         {
             if (!ModelState.IsValid)
             {

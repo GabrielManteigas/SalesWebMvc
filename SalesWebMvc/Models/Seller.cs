@@ -26,7 +26,9 @@ namespace SalesWebMvc.Models
         [Display(Name = "Base Salary")]
         [DisplayFormat(DataFormatString = "{0:F2}")]
         public double BaseSalary { get; set; }
-        public Department Department { get; set; }
+        public Department? Department { get; set; }
+
+        [Required(ErrorMessage = "{0} required")]
         public int DepartmentId { get; set; }
         public ICollection<SalesRecord> Sales { get; set; } = new List<SalesRecord>();
 

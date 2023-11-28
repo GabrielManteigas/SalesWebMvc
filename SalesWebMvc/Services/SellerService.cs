@@ -32,18 +32,25 @@ namespace SalesWebMvc.Services
 
         public async Task RemoveAsync(int id)
         {
-            var obj = await _context.Seller.FindAsync(id);
+
+            var obj = await _context.Seller.Include(obj => obj.Sales).FirstOrDefaultAsync(obj => obj.Id == id);
             if (obj != null)
             {
+                if (obj.Sales.Count > 0)
+                {
+                    throw new IntegrityException("Can't delete Seller because he/she has sales");
+                }
                 _context.Seller.Remove(obj);
                 await _context.SaveChangesAsync();
             }
+
         }
 
         public async Task UpdateAsync(Seller obj)
         {
             bool hasAny = await _context.Seller.AnyAsync(x => x.Id == obj.Id);
-            if (!hasAny){
+            if (!hasAny)
+            {
                 throw new NotFoundException("Id not found");
             }
 
